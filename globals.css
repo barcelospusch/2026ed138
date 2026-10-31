@@ -1,16 +1,20 @@
 :root {
     color-scheme: dark;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #101522;
-    color: #edf1fa;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #09090b;
+    color: #fafafa;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
-    --surface: #181f2e;
-    --surface-raised: #1d2637;
-    --border: #2a3548;
-    --muted: #9ba8bd;
-    --accent: #9bd5c3;
-    --accent-dark: #143b39;
+    --background: #09090b;
+    --foreground: #fafafa;
+    --surface: #09090b;
+    --surface-raised: #18181b;
+    --border: #27272a;
+    --muted: #a1a1aa;
+    --accent: #fafafa;
+    --accent-foreground: #18181b;
+    --ring: #d4d4d8;
+    --input: #27272a;
 }
 
 * {
@@ -20,9 +24,7 @@
 body {
     min-width: 0;
     margin: 0;
-    background:
-        radial-gradient(ellipse at 12% 0%, rgb(39 71 81 / 24%), transparent 36rem),
-        #101522;
+    background: var(--background);
 }
 
 button,
@@ -47,7 +49,7 @@ select {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--accent);
+    color: var(--muted);
     font-size: .75rem;
     font-weight: 750;
     letter-spacing: .16em;
@@ -56,6 +58,7 @@ select {
 
 .eyebrow .ph {
     font-size: 1.1rem;
+    color: var(--foreground);
 }
 
 h1 {
@@ -89,7 +92,7 @@ h1 {
 }
 
 .toolbar h2 .ph {
-    color: var(--accent);
+    color: var(--muted);
     font-size: 1.2rem;
 }
 
@@ -100,10 +103,10 @@ h1 {
 
 /* Filter form */
 .filters {
-    padding: 20px;
+    padding: 24px;
     border: 1px solid var(--border);
-    border-radius: 16px;
-    background: rgb(24 31 46 / 88%);
+    border-radius: 10px;
+    background: var(--surface);
 }
 
 .filter-grid {
@@ -122,7 +125,7 @@ h1 {
 .field label,
 .group-label {
     min-width: 0;
-    color: #c6d0e0;
+    color: var(--foreground);
     font-size: .82rem;
     font-weight: 650;
 }
@@ -131,25 +134,25 @@ h1 {
 .field select {
     width: 100%;
     min-width: 0;
-    min-height: 42px;
+    min-height: 40px;
     padding: 9px 11px;
-    color: #edf1fa;
-    border: 1px solid #354258;
-    border-radius: 8px;
+    color: var(--foreground);
+    border: 1px solid var(--input);
+    border-radius: 6px;
     outline: none;
-    background: #111827;
+    background: var(--background);
 }
 
 .field input:focus,
 .field select:focus,
 button:focus-visible {
-    border-color: var(--accent);
-    outline: 2px solid rgb(155 213 195 / 28%);
+    border-color: var(--ring);
+    outline: 2px solid rgb(212 212 216 / 25%);
     outline-offset: 1px;
 }
 
 .field input::placeholder {
-    color: #738098;
+    color: #71717a;
 }
 
 .range {
@@ -168,14 +171,14 @@ button:focus-visible {
     min-width: 0;
     padding: 14px;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 6px;
 }
 
 .geo-toggle {
     display: flex;
     align-items: center;
     gap: 9px;
-    color: #dce5f2;
+    color: var(--foreground);
     font-size: .9rem;
     font-weight: 650;
 }
@@ -183,7 +186,7 @@ button:focus-visible {
 .geo-toggle input {
     width: 16px;
     height: 16px;
-    accent-color: var(--accent);
+    accent-color: var(--foreground);
 }
 
 .geo-fields {
@@ -213,10 +216,11 @@ button:focus-visible {
     min-height: 40px;
     padding: 9px 15px;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    color: #dce5f2;
-    background: #202a3b;
+    border-radius: 6px;
+    color: var(--foreground);
+    background: var(--surface-raised);
     cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease;
 }
 
 .filter-actions button .ph {
@@ -225,18 +229,22 @@ button:focus-visible {
 
 .filter-actions button.primary {
     border-color: var(--accent);
-    color: #10211f;
+    color: var(--accent-foreground);
     background: var(--accent);
-    font-weight: 750;
+    font-weight: 600;
 }
 
 .filter-actions button:hover {
-    filter: brightness(1.1);
+    background: #27272a;
+}
+
+.filter-actions button.primary:hover {
+    background: #e4e4e7;
 }
 
 .status {
     min-height: 1.2em;
-    color: #ffb6a8;
+    color: #fca5a5;
     font-size: .85rem;
 }
 
@@ -249,7 +257,7 @@ button:focus-visible {
 .event-card {
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 10px;
     background: var(--surface);
 }
 
@@ -261,6 +269,7 @@ button:focus-visible {
     gap: 16px;
     padding: 20px 21px 16px;
     border-bottom: 1px solid var(--border);
+    background: var(--surface);
 }
 
 .event-name {
@@ -272,7 +281,7 @@ button:focus-visible {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: var(--accent);
+    color: var(--muted);
     font-size: .9rem;
     font-weight: 650;
 }
@@ -289,23 +298,23 @@ button:focus-visible {
 
 .badge {
     padding: 5px 9px;
-    border: 1px solid #354258;
-    border-radius: 999px;
-    color: #cbd6e6;
-    background: #202a3b;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: #d4d4d8;
+    background: var(--surface-raised);
     font-size: .75rem;
 }
 
 .badge.night {
-    border-color: #3a5666;
-    color: #b6e4f1;
-    background: #1b3441;
+    border-color: #3f3f46;
+    color: #e4e4e7;
+    background: #27272a;
 }
 
 .badge.day {
-    border-color: #6b5736;
-    color: #f0d39a;
-    background: #3b3020;
+    border-color: #52525b;
+    color: #f4f4f5;
+    background: #3f3f46;
 }
 
 .card-body {
@@ -331,7 +340,7 @@ button:focus-visible {
 .metric dd {
     overflow-wrap: anywhere;
     margin: 0;
-    color: #e8edf7;
+    color: var(--foreground);
     font-size: .91rem;
     font-variant-numeric: tabular-nums;
 }
@@ -348,7 +357,7 @@ button:focus-visible {
 
 .event-id {
     margin-top: 17px;
-    color: #7f8ba0;
+    color: var(--muted);
     font-size: .72rem;
     overflow-wrap: anywhere;
 }
@@ -357,7 +366,7 @@ button:focus-visible {
 .error {
     padding: 24px;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     color: var(--muted);
     background: var(--surface);
     line-height: 1.6;
@@ -365,14 +374,14 @@ button:focus-visible {
 
 .error {
     margin-top: 20px;
-    border-color: #744841;
-    color: #ffd1c6;
-    background: #342421;
+    border-color: #7f1d1d;
+    color: #fecaca;
+    background: #1c1012;
 }
 
 .footnote {
     margin: 18px 0 0;
-    color: #8693a8;
+    color: var(--muted);
     font-size: .78rem;
     line-height: 1.55;
 }
