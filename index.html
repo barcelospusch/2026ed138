@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101522">
+    <title>Eventos de ocultação | 2026 ED138</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="./globals.css">
+</head>
+<body>
+    <main class="page">
+        <header>
+            <div class="eyebrow"><i class="ph ph-orbit" aria-hidden="true"></i>Predições astronômicas</div>
+            <h1>Eventos de ocultação</h1>
+            <p class="intro">Explore as previsões de ocultação de 2026 ED138 e encontre eventos por brilho, duração, período, visibilidade e classe dinâmica.</p>
+        </header>
+
+        <section aria-labelledby="filters-title">
+            <div class="toolbar">
+                <h2 id="filters-title"><i class="ph ph-sliders-horizontal" aria-hidden="true"></i>Filtros</h2>
+                <span class="count" id="result-count" aria-live="polite">Carregando eventos…</span>
+            </div>
+            <form class="filters" id="filters">
+                <div class="filter-grid">
+                    <div class="field">
+                        <label for="mag-min">Magnitude da estrela (g)</label>
+                        <div class="range">
+                            <input id="mag-min" type="number" step="any" placeholder="Mínima" aria-label="Magnitude mínima da estrela">
+                            <input id="mag-max" type="number" step="any" placeholder="Máxima" aria-label="Magnitude máxima da estrela">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="duration-min">Duração (long, segundos)</label>
+                        <div class="range">
+                            <input id="duration-min" type="number" min="0" step="any" placeholder="Mínima" aria-label="Duração mínima em segundos">
+                            <input id="duration-max" type="number" min="0" step="any" placeholder="Máxima" aria-label="Duração máxima em segundos">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="date-from">Data e hora do evento (fuso local)</label>
+                        <div class="range date-range">
+                            <input id="date-from" type="datetime-local" aria-label="Data e hora inicial">
+                            <input id="date-to" type="datetime-local" aria-label="Data e hora final">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="nightside">Condição da ocultação</label>
+                        <select id="nightside">
+                            <option value="">Diurna e noturna</option>
+                            <option value="night">Somente noturna</option>
+                            <option value="day">Somente diurna</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="dynclass">Classe dinâmica</label>
+                        <select id="dynclass"><option value="">Todas as classes</option></select>
+                    </div>
+                    <div class="field">
+                        <label for="dynsubclass">Subclasse dinâmica</label>
+                        <select id="dynsubclass"><option value="">Todas as subclasses</option></select>
+                    </div>
+                    <fieldset class="geo">
+                        <legend class="group-label"><i class="ph ph-map-pin-line" aria-hidden="true"></i> Geolocalização do caminho da ocultação</legend>
+                        <label class="geo-toggle" for="geo-enabled">
+                            <input id="geo-enabled" type="checkbox">
+                            <i class="ph ph-crosshair" aria-hidden="true"></i> Filtrar eventos visíveis perto de uma coordenada
+                        </label>
+                        <div class="geo-fields" id="geo-fields" hidden>
+                            <div class="field">
+                                <label for="latitude">Latitude (°)</label>
+                                <input id="latitude" type="number" min="-90" max="90" step="any" placeholder="-23.55">
+                            </div>
+                            <div class="field">
+                                <label for="longitude">Longitude (°)</label>
+                                <input id="longitude" type="number" min="-180" max="180" step="any" placeholder="-46.63">
+                            </div>
+                            <div class="field">
+                                <label for="radius">Raio de busca (km)</label>
+                                <input id="radius" type="number" min="0" step="any" value="100">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="filter-actions">
+                    <button class="primary" type="submit"><i class="ph ph-funnel" aria-hidden="true"></i>Aplicar filtros</button>
+                    <button type="reset" id="reset"><i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>Limpar</button>
+                    <span class="status" id="filter-status" role="status"></span>
+                </div>
+            </form>
+        </section>
+
+        <section aria-label="Lista de eventos">
+            <div class="toolbar">
+                <h2><i class="ph ph-calendar-dots" aria-hidden="true"></i>Eventos</h2>
+            </div>
+            <div class="events" id="events" aria-live="polite"></div>
+        </section>
+        <p class="footnote">Os horários são exibidos em UTC. A data/hora de aproximação máxima usa o instante previsto em <code>date_time</code>, pois o conjunto não fornece um campo de horário separado. A busca geográfica avalia o caminho em <code>occ_path_coeff</code> com a biblioteca <code>occjs</code>.</p>
+        <div class="error" id="load-error" role="alert" hidden></div>
+    </main>
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
