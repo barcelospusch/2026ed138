@@ -3,10 +3,20 @@ const countElement = document.querySelector("#result-count");
 const form = document.querySelector("#filters");
 const statusElement = document.querySelector("#filter-status");
 const loadErrorElement = document.querySelector("#load-error");
-const classSelect = document.querySelector("#dynclass");
-const subclassSelect = document.querySelector("#dynsubclass");
 const geoEnabled = document.querySelector("#geo-enabled");
 const geoFields = document.querySelector("#geo-fields");
+const nightOnlyButton = document.querySelector("#night-only");
+
+const urlFilterFields = [
+    ["magnitudeMin", "#mag-min"],
+    ["magnitudeMax", "#mag-max"],
+    ["durationMin", "#duration-min"],
+    ["durationMax", "#duration-max"],
+    ["dateFrom", "#event-date"],
+    ["latitude", "#latitude"],
+    ["longitude", "#longitude"],
+    ["radius", "#radius"]
+];
 
 let events = [];
 let visibilityFromCoeff;
@@ -89,8 +99,6 @@ function renderEvent(event) {
                 </div>
                 <div class="badges">
                     <span class="badge ${badgeClass}"><i class="ph ${isNight ? "ph-moon" : event.occ_path_is_nightside === false ? "ph-sun" : "ph-question"}" aria-hidden="true"></i> ${escapeHtml(condition)}</span>
-                    ${event.astorb_dynbaseclass ? `<span class="badge">${escapeHtml(event.astorb_dynbaseclass)}</span>` : ""}
-                    ${event.astorb_dynsubclass ? `<span class="badge">${escapeHtml(event.astorb_dynsubclass)}</span>` : ""}
                 </div>
             </header>
             <div class="card-body">
@@ -113,31 +121,39 @@ function renderEvent(event) {
         </article>`;
 }
 
-function populateClasses() {
-    const classes = [...new Set(events.map((event) => event.astorb_dynbaseclass).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b, "pt-BR"));
-    classSelect.innerHTML = '<option value="">Todas as classes</option>' +
-        classes.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
-    updateSubclasses();
-}
-
-function updateSubclasses() {
-    const selectedClass = classSelect.value;
-    const currentSubclass = subclassSelect.value;
-    const subclasses = [...new Set(events
-        .filter((event) => !selectedClass || event.astorb_dynbaseclass === selectedClass)
-        .map((event) => event.astorb_dynsubclass)
-        .filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-    subclassSelect.innerHTML = '<option value="">Todas as subclasses</option>' +
-        subclasses.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
-    if (subclasses.includes(currentSubclass)) subclassSelect.value = currentSubclass;
-}
-
 function getNumericInput(id) {
     const value = document.querySelector(`#${id}`).value.trim();
     return value === "" ? null : Number(value);
+}
+
+function restoreFiltersFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    for (const [parameter, selector] of urlFilterFields) {
+        const value = params.get(parameter);
+        if (value !== null) document.querySelector(selector).value = value;
+    }
+
+    nightOnlyButton.setAttribute("aria-pressed", String(params.get("nightOnly") === "1"));
+    geoEnabled.checked = params.get("geolocation") === "1";
+    geoFields.hidden = !geoEnabled.checked;
+}
+
+function saveFiltersToUrl(filters) {
+    const url = new URL(window.location.href);
+    for (const [parameter] of urlFilterFields) url.searchParams.delete(parameter);
+    url.searchParams.delete("nightOnly");
+    url.searchParams.delete("geolocation");
+
+    for (const [parameter] of urlFilterFields) {
+        const value = filters[parameter];
+        if (value !== null && value !== undefined && value !== "") {
+            url.searchParams.set(parameter, String(value));
+        }
+    }
+    if (filters.nightOnly) url.searchParams.set("nightOnly", "1");
+    if (filters.geolocation) url.searchParams.set("geolocation", "1");
+
+    window.history.replaceState(null, "", url);
 }
 
 function getFilters() {
@@ -146,11 +162,8 @@ function getFilters() {
         magnitudeMax: getNumericInput("mag-max"),
         durationMin: getNumericInput("duration-min"),
         durationMax: getNumericInput("duration-max"),
-        dateFrom: document.querySelector("#date-from").value,
-        dateTo: document.querySelector("#date-to").value,
-        nightside: document.querySelector("#nightside").value,
-        dynclass: classSelect.value,
-        dynsubclass: subclassSelect.value,
+        dateFrom: document.querySelector("#event-date").value,
+        nightOnly: nightOnlyButton.getAttribute("aria-pressed") === "true",
         geolocation: geoEnabled.checked
     };
 
@@ -160,10 +173,6 @@ function getFilters() {
     if (filters.durationMin !== null && filters.durationMax !== null && filters.durationMin > filters.durationMax) {
         throw new Error("A duração mínima não pode ser maior que a máxima.");
     }
-    if (filters.dateFrom && filters.dateTo && new Date(filters.dateFrom) > new Date(filters.dateTo)) {
-        throw new Error("A data inicial não pode ser posterior à data final.");
-    }
-
     if (filters.geolocation) {
         filters.latitude = getNumericInput("latitude");
         filters.longitude = getNumericInput("longitude");
@@ -204,13 +213,9 @@ function matchesNonGeographicFilters(event, filters) {
     if (filters.magnitudeMax !== null && (magnitude === null || magnitude > filters.magnitudeMax)) return false;
     if (filters.durationMin !== null && (duration === null || duration < filters.durationMin)) return false;
     if (filters.durationMax !== null && (duration === null || duration > filters.durationMax)) return false;
-    if ((filters.dateFrom || filters.dateTo) && !Number.isFinite(date)) return false;
+    if (filters.dateFrom && !Number.isFinite(date)) return false;
     if (filters.dateFrom && date < new Date(filters.dateFrom).getTime()) return false;
-    if (filters.dateTo && date > new Date(filters.dateTo).getTime()) return false;
-    if (filters.nightside === "night" && event.occ_path_is_nightside !== true) return false;
-    if (filters.nightside === "day" && event.occ_path_is_nightside !== false) return false;
-    if (filters.dynclass && event.astorb_dynbaseclass !== filters.dynclass) return false;
-    if (filters.dynsubclass && event.astorb_dynsubclass !== filters.dynsubclass) return false;
+    if (filters.nightOnly && event.occ_path_is_nightside !== true) return false;
     return true;
 }
 
@@ -243,6 +248,7 @@ async function applyFilters() {
         }
     }
 
+    saveFiltersToUrl(filters);
     filtered.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
     countElement.textContent = `${filtered.length} de ${events.length} eventos`;
     eventsElement.innerHTML = filtered.length
@@ -255,12 +261,11 @@ form.addEventListener("submit", (event) => {
     void applyFilters();
 });
 
-classSelect.addEventListener("change", () => {
-    updateSubclasses();
+nightOnlyButton.addEventListener("click", () => {
+    const isPressed = nightOnlyButton.getAttribute("aria-pressed") === "true";
+    nightOnlyButton.setAttribute("aria-pressed", String(!isPressed));
     void applyFilters();
 });
-
-subclassSelect.addEventListener("change", () => void applyFilters());
 
 geoEnabled.addEventListener("change", () => {
     geoFields.hidden = !geoEnabled.checked;
@@ -274,8 +279,7 @@ geoEnabled.addEventListener("change", () => {
 form.addEventListener("reset", () => {
     window.setTimeout(() => {
         geoFields.hidden = true;
-        classSelect.value = "";
-        updateSubclasses();
+        nightOnlyButton.setAttribute("aria-pressed", "false");
         statusElement.textContent = "";
         void applyFilters();
     });
@@ -283,6 +287,7 @@ form.addEventListener("reset", () => {
 
 async function initialize() {
     try {
+        restoreFiltersFromUrl();
         const response = await fetch("./data.json");
         if (!response.ok) throw new Error(`data.json respondeu com HTTP ${response.status}.`);
         const data = await response.json();
@@ -290,7 +295,6 @@ async function initialize() {
             throw new Error("O arquivo data.json não contém um array results válido.");
         }
         events = data.results;
-        populateClasses();
         await applyFilters();
     } catch (error) {
         countElement.textContent = "Não foi possível carregar os eventos";

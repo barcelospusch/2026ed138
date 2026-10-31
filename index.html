@@ -13,7 +13,7 @@
         <header>
             <div class="eyebrow"><i class="ph ph-orbit" aria-hidden="true"></i>Predições astronômicas</div>
             <h1>Eventos de ocultação</h1>
-            <p class="intro">Explore as previsões de ocultação de 2026 ED138 e encontre eventos por brilho, duração, período, visibilidade e classe dinâmica.</p>
+            <p class="intro">Explore as previsões de ocultação de 2026 ED138 e encontre eventos por brilho, duração, período e visibilidade.</p>
         </header>
 
         <section aria-labelledby="filters-title">
@@ -38,27 +38,14 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label for="date-from">Data e hora do evento (fuso local)</label>
-                        <div class="range date-range">
-                            <input id="date-from" type="datetime-local" aria-label="Data e hora inicial">
-                            <input id="date-to" type="datetime-local" aria-label="Data e hora final">
-                        </div>
+                        <label for="event-date">A partir de (data e hora local)</label>
+                        <input id="event-date" type="datetime-local" aria-label="Data e hora inicial">
                     </div>
                     <div class="field">
-                        <label for="nightside">Condição da ocultação</label>
-                        <select id="nightside">
-                            <option value="">Diurna e noturna</option>
-                            <option value="night">Somente noturna</option>
-                            <option value="day">Somente diurna</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="dynclass">Classe dinâmica</label>
-                        <select id="dynclass"><option value="">Todas as classes</option></select>
-                    </div>
-                    <div class="field">
-                        <label for="dynsubclass">Subclasse dinâmica</label>
-                        <select id="dynsubclass"><option value="">Todas as subclasses</option></select>
+                        <span class="field-label">Período do evento</span>
+                        <button class="night-toggle" id="night-only" type="button" aria-pressed="false">
+                            <i class="ph ph-moon-stars" aria-hidden="true"></i> Somente noturnos
+                        </button>
                     </div>
                     <fieldset class="geo">
                         <legend class="group-label"><i class="ph ph-map-pin-line" aria-hidden="true"></i> Geolocalização do caminho da ocultação</legend>
